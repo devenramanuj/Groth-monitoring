@@ -1077,27 +1077,5 @@ function renderTableRefresh(){
 </script>
 </body>
 </html>}
- $('#ageGroupFilter, #sexFilter').on('change', applyFiltersToTable);
-
-/* -------------------------
-   Helper to refresh table (destroy & re-render)
-   ------------------------- */
-function renderTableRefresh(){
-  if ($.fn.DataTable.isDataTable('#childTable')) {
-    table.clear().draw();
-    table.destroy();
-  }
-  renderRows();
-  applyFiltersToTable();
-}
-
-/* -------------------------
-   Initial load
-   ------------------------- */
- $(document).ready(function(){
-  renderTableRefresh();
-});
-</script>
-</body>
-</html>
+ 
 
