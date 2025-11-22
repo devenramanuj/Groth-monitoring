@@ -721,22 +721,35 @@
     display: none;
   }
 
-  /* Date input styling for DD/MM/YYYY format */
-  .date-input-wrapper {
+  /* Password input wrapper for show/hide */
+  .password-wrapper {
     position: relative;
+    width: 100%;
   }
-  
-  .date-display {
+
+  .toggle-password {
     position: absolute;
-    right: 12px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 18px;
+  }
+
+  .toggle-password:hover {
+    color: var(--primary);
+  }
+
+  /* Debug info */
+  .debug-info {
+    background: var(--light);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 15px;
     font-size: 12px;
     color: var(--muted);
-    background: var(--card);
-    padding: 2px 6px;
-    border-radius: 4px;
-    pointer-events: none;
+    border: 1px solid var(--border-color);
   }
 </style>
 </head>
@@ -747,9 +760,21 @@
   <div class="login-container">
     <h2><i class="fas fa-lock"></i> સુરક્ષિત પ્રવેશ</h2>
     <p>આ એપ્લિકેશન પાસવર્ડ દ્વારા સુરક્ષિત છે. પાસવર્ડ માટે સંપર્ક કરો: 9276505035</p>
-    <input type="password" id="passwordInput" placeholder="પાસવર્ડ દાખલ કરો" autocomplete="off">
+    
+    <div class="password-wrapper">
+      <input type="password" id="passwordInput" placeholder="પાસવર્ડ દાખલ કરો" autocomplete="off">
+      <i class="fas fa-eye toggle-password" id="togglePassword" title="પાસવર્ડ બતાવો"></i>
+    </div>
+    
     <button id="loginBtn">પ્રવેશ કરો</button>
     <p id="loginError">ખોટો પાસવર્ડ! ફરીથી પ્રયાસ કરો.</p>
+    
+    <div class="debug-info">
+      <strong>ડિબગ માહિતી:</strong><br>
+      પાસવર્ડ: <span id="debugPassword">-</span><br>
+      લંબાઈ: <span id="debugLength">-</span><br>
+      કેસ: <span id="debugCase">-</span>
+    </div>
   </div>
 </div>
 
@@ -969,27 +994,46 @@ window.onload = function() {
   const loginBtn = document.getElementById('loginBtn');
   const loginError = document.getElementById('loginError');
   const mainApp = document.getElementById('mainApp');
+  const togglePassword = document.getElementById('togglePassword');
+  const debugPassword = document.getElementById('debugPassword');
+  const debugLength = document.getElementById('debugLength');
+  const debugCase = document.getElementById('debugCase');
+
+  // Function to update debug info
+  function updateDebugInfo(password) {
+    debugPassword.textContent = password || '-';
+    debugLength.textContent = password ? password.length : '-';
+    debugCase.textContent = password ? (password === password.toLowerCase() ? 'લોઅરકેસ' : 'મિશ્રિત કેસ') : '-';
+  }
 
   // Function to check password
   function checkPassword() {
-    const enteredPassword = passwordInput.value.trim();
-    console.log('Entered password:', enteredPassword); // Debug log
-    console.log('Correct password:', CORRECT_PASSWORD); // Debug log
+    const enteredPassword = passwordInput.value;
     
-    if (enteredPassword === CORRECT_PASSWORD) {
+    // Update debug info
+    updateDebugInfo(enteredPassword);
+    
+    // More robust password checking
+    if (enteredPassword && enteredPassword.trim() === CORRECT_PASSWORD) {
       passwordOverlay.style.display = 'none';
       mainApp.style.display = 'block';
       loginError.style.display = 'none';
-      console.log('Password correct, showing app'); // Debug log
       // Initialize app after successful login
       initializeApp();
     } else {
       loginError.style.display = 'block';
-      passwordInput.value = '';
+      // Don't clear password on error, just show error
       passwordInput.focus();
-      console.log('Password incorrect'); // Debug log
     }
   }
+
+  // Toggle password visibility
+  togglePassword.addEventListener('click', function() {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+  });
 
   // Add event listeners
   loginBtn.addEventListener('click', checkPassword);
@@ -998,6 +1042,11 @@ window.onload = function() {
     if (event.key === 'Enter') {
       checkPassword();
     }
+  });
+
+  // Update debug info on input
+  passwordInput.addEventListener('input', function() {
+    updateDebugInfo(this.value);
   });
 
   // Focus on password input
@@ -1156,10 +1205,10 @@ function calculateGrade(weight, height){
 
   if (bmi < 16) {
     // અતિ ગંભીર (Severe Thinness)
-    return { text: 'અતિ ગંભીર', cls: 'pill bad' }; // લાલ કલર
+    return { text: 'ગંભીર', cls: 'pill bad' }; // લાલ કલર
   } else if (bmi < 18.5) {
     // ગંભીર (Underweight/Thinness)
-    return { text: 'ઓછું વજન/ગંભીર', cls: 'pill warn' }; // પીળો કલર
+    return { text: 'ઓછું વજન', cls: 'pill warn' }; // પીળો કલર
   } else {
     // સામાન્ય (Normal Weight)
     return { text: 'સામાન્ય', cls: 'pill ok' }; // લીલો કલર
@@ -1273,14 +1322,12 @@ function setupTableEventListeners() {
   $('#childTable tbody').on('click', '.edit', function(e){
     e.preventDefault();
     const id = Number($(this).data('id')); 
-    console.log('Edit button clicked for ID:', id);
     startEdit(id);
   });
   
   $('#childTable tbody').on('click', '.del', function(e){
     e.preventDefault();
     const id = Number($(this).data('id')); 
-    console.log('Delete button clicked for ID:', id);
     confirmDelete(id);
   });
 }
