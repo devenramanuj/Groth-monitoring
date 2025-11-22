@@ -1074,8 +1074,18 @@ function renderTableRefresh(){
  $(document).ready(function(){
   renderTableRefresh();
 });
+// Age group filter
+$('#ageGroupFilter').on('change', function () {
+    table.column(6).search(this.value).draw();
+    table.page('first').draw('page');  // <-- ADD THIS LINE
+});
+
+// Sex filter
+$('#sexFilter').on('change', function () {
+    table.column(3).search(this.value).draw();
+    table.page('first').draw('page');  // <-- ADD THIS LINE
+});
 </script>
 </body>
 </html>}
  
-
