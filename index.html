@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>બાળક માહિતી વ્યવસ્થાપન પ્રણાલી</title>
 
+<!-- DataTables CSS (for buttons/colvis) -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
 
+<!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -280,12 +282,15 @@
   .form-title i {
     margin-right: 10px;
   }
+  /* Updated grid layout for new field */
   form{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr 1fr 1fr; /* 3 columns for better use of space */
     gap:15px;
   }
-  @media(max-width:760px){form{grid-template-columns:1fr}}
+  @media(max-width:900px){form{grid-template-columns:1fr 1fr}} /* 2 columns on tablet */
+  @media(max-width:550px){form{grid-template-columns:1fr}} /* 1 column on mobile */
+
   .form-group {
     display: flex;
     flex-direction: column;
@@ -620,15 +625,18 @@
   </div>
   <h1>બાળક માહિતી વ્યવસ્થાપન પ્રણાલી</h1>
 
+  <!-- Success Message -->
   <div class="success-message" id="successMessage">
     <i class="fas fa-check-circle"></i>
     <span id="successText">માહિતી સફળતાપૂર્વક સાચવી ગઈ!</span>
   </div>
+  <!-- Error Message -->
   <div class="error-message" id="errorMessage">
     <i class="fas fa-times-circle"></i>
     <span id="errorText">માહિતી Import કરવામાં ભૂલ!</span>
   </div>
 
+  <!-- Form Card -->
   <div class="form-card">
     <div class="form-title">
       <i class="fas fa-user-plus"></i>
@@ -636,6 +644,8 @@
     </div>
     <form id="childForm">
       <input type="hidden" id="editId">
+      
+      <!-- Row 1 -->
       <div class="form-group">
         <label for="name"><i class="fas fa-user"></i> બાળકનું નામ</label>
         <input id="name" type="text" required placeholder="બાળકનું પૂરું નામ લખો">
@@ -644,7 +654,12 @@
         <label for="motherName"><i class="fas fa-female"></i> માતાનું નામ</label>
         <input id="motherName" type="text" required placeholder="માતાનું પૂરું નામ">
       </div>
+      <div class="form-group">
+        <label for="dob"><i class="fas fa-calendar-alt"></i> જન્મતારીખ</label>
+        <input id="dob" type="date" required>
+      </div>
 
+      <!-- Row 2 -->
       <div class="form-group">
         <label for="sex"><i class="fas fa-venus-mars"></i> લિંગ</label>
         <select id="sex" required>
@@ -654,11 +669,6 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="dob"><i class="fas fa-calendar-alt"></i> જન્મતારીખ</label>
-        <input id="dob" type="date" required>
-      </div>
-
-      <div class="form-group">
         <label for="mobileNumber"><i class="fas fa-mobile-alt"></i> મોબાઇલ નંબર</label>
         <input id="mobileNumber" type="tel" placeholder="10 અંકનો મોબાઇલ નંબર">
       </div>
@@ -667,6 +677,7 @@
         <input id="aadhaarNumber" type="text" placeholder="12 અંકનો આધાર નંબર">
       </div>
 
+      <!-- Row 3 -->
       <div class="form-group">
         <label for="apaarId"><i class="fas fa-address-card"></i> અપાર ID</label>
         <input id="apaarId" type="text" placeholder="જો હોય તો">
@@ -675,7 +686,12 @@
         <label for="abhaId"><i class="fas fa-hospital"></i> આભા ID</label>
         <input id="abhaId" type="text" placeholder="જો હોય તો">
       </div>
+      <div class="form-group">
+        <label for="weightDate"><i class="fas fa-calendar-check"></i> વજન કર્યા તારીખ</label>
+        <input id="weightDate" type="date" required>
+      </div>
 
+      <!-- Row 4 -->
       <div class="form-group">
         <label for="weight"><i class="fas fa-weight"></i> વજન (કિગ્રા)</label>
         <input id="weight" type="number" step="0.1" required placeholder="ઉદાહરણ: 6.5">
@@ -684,6 +700,8 @@
         <label for="height"><i class="fas fa-ruler-vertical"></i> ઊંચાઈ (સેમી)</label>
         <input id="height" type="number" step="0.1" required placeholder="ઉદાહરણ: 65.2">
       </div>
+      <!-- Empty group for layout alignment or new fields -->
+      <div class="form-group"></div> 
 
       <button class="btn-primary" type="submit">
         <i class="fas fa-save"></i>
@@ -692,23 +710,29 @@
     </form>
   </div>
 
+  <!-- Filters Card -->
   <div class="filters-card">
     <div class="filters-title">
       <i class="fas fa-filter"></i>
       ફિલ્ટર્સ અને એક્સપોર્ટ
     </div>
     <div class="filters">
+      <!-- DT Buttons and Custom Export/Import -->
       <div style="display:flex; flex-direction:column; gap:8px;">
         <div id="dtButtons"></div>
         <div class="custom-action-buttons">
+            <!-- Export Button -->
             <button class="btn" id="exportBtn"><i class="fas fa-file-export"></i> ડેટા Export (JSON)</button>
+            <!-- Import Button (hidden file input) -->
             <input type="file" id="importFile" accept="application/json">
             <button class="btn" id="importBtn"><i class="fas fa-file-import"></i> ડેટા Import (JSON)</button>
         </div>
       </div>
 
+      <!-- Filters -->
       <div class="filter-options">
         
+        <!-- Age Group Custom Dropdown -->
         <div class="custom-dropdown">
             <button type="button" class="dropdown-btn" id="ageGroupDropdownBtn">
                 <span id="ageGroupLabel">ઉંમર જૂથથી ફિલ્ટર કરો</span>
@@ -734,7 +758,9 @@
     </div>
   </div>
 
+  <!-- Table Card -->
   <div class="table-card">
+    <!-- ... table header content ... -->
     <div class="table-header">
       <div class="table-title">
         <i class="fas fa-table"></i>
@@ -766,6 +792,7 @@
               <th>આધાર</th>
               <th>અપાર ID</th>
               <th>આભા ID</th>
+              <th>વજન કર્યા તારીખ</th> <!-- NEW COLUMN -->
               <th>વજન</th>
               <th>ઊંચાઈ</th>
               <th>ગ્રેડ</th>
@@ -783,6 +810,7 @@
   </footer>
 </div>
 
+<!-- Scripts: jQuery + DataTables + Buttons + export libs -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -832,8 +860,20 @@ function getChildren(){ return JSON.parse(localStorage.getItem('childrenData')||
 function setChildren(arr){ localStorage.setItem('childrenData', JSON.stringify(arr)); }
 
 /* -------------------------
-   Utils: age, group, grade
+   Utils: age, group, grade, date format
    ------------------------- */
+
+// Function to format date from YYYY-MM-DD to DD/MM/YYYY
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    } catch (e) {
+        return dateStr; // return original if parsing fails
+    }
+}
+
 function calculateAge(dobStr){
   if(!dobStr) return '';
   const dob = new Date(dobStr);
@@ -880,7 +920,7 @@ function showErrorMessage(message) {
 }
 
 /* -------------------------
-   DataTable initialization (FIX APPLIED HERE)
+   DataTable initialization
    ------------------------- */
 let table;
 function initDataTable(){
@@ -890,7 +930,6 @@ function initDataTable(){
   }
 
   const isMobile = window.innerWidth < 768;
-  // *** FIXED: Get the currently selected page length value
   const recordsPerPage = $('#recordsPerPage').val() || 10;
 
   table = $('#childTable').DataTable({
@@ -901,11 +940,11 @@ function initDataTable(){
       { extend: 'print', text: '<i class="fas fa-print"></i> છાપો' },
       { extend: 'colvis', text: '<i class="fas fa-columns"></i> કૉલમ' }
     ],
+    // Updated targets for the new column index (16 total columns now)
     columnDefs: [
-      { targets: 14, orderable: false }
+      { targets: 15, orderable: false }
     ],
     paging: true,
-    // *** FIXED: Use the selected value for pageLength
     pageLength: parseInt(recordsPerPage),
     lengthChange: !isMobile,
     lengthMenu: [[10, 15, 20], [10, 15, 20]],
@@ -949,11 +988,12 @@ function renderRows(){
       c.aadhaarNumber || '',
       c.apaarId || '',
       c.abhaId || '',
-      c.weight !== undefined ? c.weight : '',
-      c.height !== undefined ? c.height : '',
-      `<span class="${grade.cls}">${grade.text}</span>`,
+      formatDate(c.weightDate), // NEW: Column index 11 (Formatted Date)
+      c.weight !== undefined ? c.weight : '', // Column index 12
+      c.height !== undefined ? c.height : '', // Column index 13
+      `<span class="${grade.cls}">${grade.text}</span>`, // Column index 14
       `<button class="action-btn edit" data-id="${c.id}"><i class="fas fa-edit"></i> સુધારો</button>
-       <button class="action-btn del" data-id="${c.id}"><i class="fas fa-trash"></i> કાઢો</button>`
+       <button class="action-btn del" data-id="${c.id}"><i class="fas fa-trash"></i> કાઢો</button>` // Column index 15
     ];
     table.row.add(row).draw(false);
   });
@@ -984,6 +1024,7 @@ function renderRows(){
     aadhaarNumber: $('#aadhaarNumber').val().trim(),
     apaarId: $('#apaarId').val().trim(),
     abhaId: $('#abhaId').val().trim(),
+    weightDate: $('#weightDate').val(), // NEW: Capture Weight Date
     weight: $('#weight').val(),
     height: $('#height').val()
   };
@@ -1017,6 +1058,7 @@ function startEdit(id){
   $('#aadhaarNumber').val(c.aadhaarNumber);
   $('#apaarId').val(c.apaarId);
   $('#abhaId').val(c.abhaId);
+  $('#weightDate').val(c.weightDate); // NEW: Load Weight Date
   $('#weight').val(c.weight);
   $('#height').val(c.height);
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1147,13 +1189,12 @@ $('#importFile').on('change', function(e) {
             const importedData = JSON.parse(event.target.result);
             if (Array.isArray(importedData)) {
                 
-                // Optional: Validate data structure before setting
+                // Basic validation for core fields
                 const isValid = importedData.every(item => 
                     item.id !== undefined && item.name !== undefined && item.dob !== undefined
                 );
 
                 if (isValid || importedData.length === 0) {
-                    // Overwrite current data with imported data
                     setChildren(importedData);
                     renderTableRefresh();
                     showSuccessMessage(`કુલ ${importedData.length} રેકોર્ડ સફળતાપૂર્વક Import થયા!`);
@@ -1168,7 +1209,6 @@ $('#importFile').on('change', function(e) {
             console.error("Import Error:", error);
             showErrorMessage('JSON ફાઇલ વાંચવામાં અથવા પારસ (parse) કરવામાં ભૂલ થઈ.');
         } finally {
-             // Reset file input value to allow importing the same file again
              e.target.value = '';
         }
     };
@@ -1177,12 +1217,11 @@ $('#importFile').on('change', function(e) {
 
 
 /* -------------------------
-   Helper to refresh table (FIXED for Page Length)
+   Helper to refresh table
    ------------------------- */
 function renderTableRefresh(){
   $.fn.dataTable.ext.search.pop(); 
   
-  // *** FIXED: Get the current page length setting before destruction
   const currentPageLength = $('#recordsPerPage').val(); 
   
   if ($.fn.DataTable.isDataTable('#childTable')) {
@@ -1190,7 +1229,6 @@ function renderTableRefresh(){
     table.destroy();
   }
   
-  // Set the correct page length back to the selector (in case it was disabled/overridden by DT)
   $('#recordsPerPage').val(currentPageLength); 
   
   renderRows();
@@ -1199,15 +1237,13 @@ function renderTableRefresh(){
 }
 
 /* -------------------------
-   Records per page selector (FIXED: Use DataTables API to change page length)
+   Records per page selector
    ------------------------- */
 $('#recordsPerPage').on('change', function() {
   const recordsPerPage = $(this).val();
   if ($.fn.DataTable.isDataTable('#childTable')) {
-     // Change length using DataTables API
      table.page.len(recordsPerPage).draw();
   } else {
-     // If table hasn't been initialized yet (or was destroyed), refresh it
      renderTableRefresh();
   }
 });
