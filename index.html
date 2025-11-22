@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>બાળક માહિતી વ્યવસ્થાપન પ્રણાલી</title>
 
-<!-- DataTables CSS (for buttons/colvis) -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
 
-<!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -40,6 +38,8 @@
     --footer-bg: linear-gradient(to right, #f8f9ff, #eaeef7);
     --toggle-bg: #6a11cb;
     --toggle-circle: #ffffff;
+    --checkbox-border: #ccc;
+    --checkbox-checked: var(--primary);
   }
 
   /* CSS Variables for Dark Theme */
@@ -69,6 +69,8 @@
     --footer-bg: linear-gradient(to right, #1e1e2e, #2d2d44);
     --toggle-bg: #bb86fc;
     --toggle-circle: #f9fafb;
+    --checkbox-border: #555;
+    --checkbox-checked: var(--primary);
   }
 
   *{box-sizing:border-box}
@@ -138,9 +140,85 @@
     transform: translateX(36px);
   }
   
-  .theme-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+  /* Dropdown for Age Group Filter */
+  .custom-dropdown {
+      position: relative;
+      display: inline-block;
+      min-width: 200px;
+  }
+  
+  .dropdown-btn {
+      padding: 10px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text-color);
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+  }
+  .dropdown-btn:hover {
+      border-color: var(--primary);
+  }
+
+  .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: var(--card);
+      min-width: 200px;
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      z-index: 10;
+      padding: 10px 0;
+      margin-top: 4px;
+      border: 1px solid var(--border-color);
+  }
+  .dropdown-content.show {
+      display: block;
+  }
+
+  /* Checkbox styling inside dropdown */
+  .checkbox-group label {
+      display: flex;
+      align-items: center;
+      padding: 5px 15px;
+      cursor: pointer;
+      font-weight: normal;
+      font-size: 14px;
+      color: var(--text-color);
+      transition: background-color 0.2s;
+  }
+  .checkbox-group label:hover {
+      background-color: var(--table-row-hover);
+  }
+  .checkbox-group input[type="checkbox"] {
+      margin-right: 8px;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      border: 1px solid var(--checkbox-border);
+      border-radius: 4px;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--card);
+  }
+  .checkbox-group input[type="checkbox"]:checked {
+      background-color: var(--checkbox-checked);
+      border-color: var(--checkbox-checked);
+  }
+  .checkbox-group input[type="checkbox"]:checked::before {
+      content: '\2713'; /* Checkmark Unicode */
+      display: block;
+      color: white;
+      font-size: 12px;
+      text-align: center;
+      line-height: 14px;
   }
   
   h1{
@@ -192,11 +270,6 @@
     transition: all 0.3s ease;
   }
   
-  .form-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
-  }
-  
   .form-title {
     font-size: 20px;
     color: var(--primary);
@@ -239,14 +312,11 @@
     color:var(--text-color);
     transition:all 0.3s ease;
   }
+  
   input:focus, select:focus{
     outline:none;
     border-color:var(--primary);
     box-shadow:0 0 0 3px rgba(106, 17, 203, 0.2);
-  }
-  
-  [data-theme="dark"] input:focus, [data-theme="dark"] select:focus {
-    box-shadow:0 0 0 3px rgba(187, 134, 252, 0.2);
   }
   
   .btn-primary{
@@ -264,16 +334,9 @@
     align-items: center;
     justify-content: center;
   }
-  .btn-primary i {
-    margin-right: 8px;
-  }
   .btn-primary:hover{
     transform:translateY(-2px);
     box-shadow:0 5px 15px rgba(106, 17, 203, 0.3);
-  }
-  
-  [data-theme="dark"] .btn-primary:hover {
-    box-shadow:0 5px 15px rgba(187, 134, 252, 0.3);
   }
   
   /* Filters section */
@@ -285,11 +348,6 @@
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
     transition: all 0.3s ease;
-  }
-  
-  .filters-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
   }
   
   .filters-title {
@@ -305,14 +363,17 @@
   .filters{
     display:flex;
     gap:15px;
-    align-items:center;
+    align-items:flex-start; 
     flex-wrap:wrap;
+    justify-content:space-between;
   }
-  .filters .left{
-    display:flex;
-    gap:10px;
-    align-items:center;
+  
+  .filter-options {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
   }
+
   .filters select{
     padding:10px 15px;
     border-radius:8px;
@@ -322,7 +383,40 @@
     color:var(--text-color);
   }
   
-  /* Records per page selector - Made much smaller */
+  /* Custom Import/Export Buttons */
+  .custom-action-buttons .btn {
+      background: linear-gradient(90deg, #17a2b8, #0c7b93);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-right: 8px;
+      display: inline-flex;
+      align-items: center;
+  }
+  .custom-action-buttons .btn:last-child {
+      background: linear-gradient(90deg, #ffc107, #e0a800);
+      color: #333;
+  }
+  .custom-action-buttons .btn i {
+      margin-right: 5px;
+  }
+  .custom-action-buttons .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+  }
+  .custom-action-buttons .btn:last-child:hover {
+      box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+  }
+  /* Hiding the file input */
+  #importFile {
+      display: none;
+  }
+  
+  /* Records per page selector */
   .records-selector {
     display: flex;
     align-items: center;
@@ -358,29 +452,6 @@
     transition: all 0.3s ease;
   }
   
-  .table-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
-  }
-  
-  .table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .table-title {
-    font-size: 18px;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-  }
-  .table-title i {
-    margin-right: 10px;
-  }
   .table-wrap{
     overflow:auto;
     background:var(--card);
@@ -439,16 +510,8 @@
   .edit{
     background:linear-gradient(90deg,var(--info),#0c7b93);
   }
-  .edit:hover{
-    transform:translateY(-2px);
-    box-shadow:0 4px 8px rgba(23, 162, 184, 0.3);
-  }
   .del{
     background:linear-gradient(90deg,var(--danger),#a71e2a);
-  }
-  .del:hover{
-    transform:translateY(-2px);
-    box-shadow:0 4px 8px rgba(220, 53, 69, 0.3);
   }
   .dt-button{
     border-radius:8px;
@@ -460,136 +523,63 @@
     font-weight:600;
     transition:all 0.3s ease;
   }
-  .dt-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(106, 17, 203, 0.3);
-  }
   
-  [data-theme="dark"] .dt-button:hover {
-    box-shadow: 0 4px 8px rgba(187, 134, 252, 0.3);
-  }
-  
-  /* DataTables pagination and length menu styling */
-  .dataTables_wrapper .dataTables_paginate .paginate_button {
-    color: var(--text-color) !important;
-    background: var(--card) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 4px !important;
-    margin: 0 2px !important;
-    padding: 5px 10px !important;
-  }
-  
-  .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    background: var(--primary) !important;
-    color: white !important;
-  }
-  
-  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background: var(--secondary) !important;
-    color: white !important;
-  }
-  
-  .dataTables_wrapper .dataTables_length select {
-    background: var(--card) !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 4px !important;
-    padding: 5px !important;
-  }
-  
-  .dataTables_wrapper .dataTables_info {
-    color: var(--text-color) !important;
-  }
-  
-  /* Footer */
-  footer{
-    margin-top:20px;
-    text-align:center;
-    color:var(--muted);
-    font-size:14px;
-    padding:15px;
-    background: var(--footer-bg);
-    border-radius: var(--radius);
-    transition: all 0.3s ease;
-  }
-  /* Responsive adjustments */
+  /* Responsive adjustments (Mobile-Friendly) */
   @media(max-width:768px){
     .container{padding:15px;}
     h1{font-size:24px;}
-    .form-card, .filters-card, .table-card {
-      padding: 15px;
+    .filters-card, .table-card { padding: 15px; }
+    
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
     }
-    .theme-toggle-container {
-      top: 10px;
-      right: 10px;
+    .filter-options {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
     }
-    .table-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
+    /* Set minimum width for dropdown and select on mobile */
+    .custom-dropdown, .filters select {
+        min-width: 100%; 
+        width: 100%;
     }
-    .dt-button {
-      font-size: 12px;
-      padding: 6px 8px;
-      margin-right: 5px;
+    .filters select {
+        box-sizing: border-box; 
     }
-    .action-btn {
-      padding: 6px 8px;
-      font-size: 12px;
-    }
-    th, td {
-      padding: 8px 5px;
-      font-size: 12px;
-    }
-  }
-  @media(max-width:420px){
-    .filters{flex-direction:column;align-items:stretch}
-    .dt-button{width:100%; margin-bottom:8px}
-    .table-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
+    /* Fix dropdown content overflow on small screens */
+    .dropdown-content {
+        min-width: 90vw; /* Take up most of viewport width */
+        right: 0; /* Align right on mobile */
+        left: auto;
     }
     .dt-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      width: 100%;
-      gap: 5px;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 5px;
+        margin-bottom: 10px;
     }
     .dt-button {
-      width: calc(50% - 5px);
-      margin-right: 0;
-      margin-bottom: 5px;
-      font-size: 11px;
-      padding: 5px 6px;
+        width: calc(50% - 5px);
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 11px;
+        padding: 5px 6px;
     }
-    .dataTables_wrapper .dataTables_paginate {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 2px;
+    .custom-action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
     }
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-      margin: 0 1px !important;
-      padding: 4px 6px !important;
-      font-size: 11px;
+    .custom-action-buttons .btn {
+        flex-grow: 1; /* Allow buttons to expand */
+        margin-right: 0;
+        font-size: 12px;
     }
   }
-  /* Loading animation */
-  .loader {
-    border: 4px solid var(--card);
-    border-top: 4px solid var(--primary);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-    display: none;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+  
   /* Success message */
   .success-message {
     background: var(--success);
@@ -600,7 +590,16 @@
     display: none;
     align-items: center;
   }
-  .success-message i {
+  .error-message {
+    background: var(--danger);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: none;
+    align-items: center;
+  }
+  .success-message i, .error-message i {
     margin-right: 10px;
   }
 </style>
@@ -621,13 +620,15 @@
   </div>
   <h1>બાળક માહિતી વ્યવસ્થાપન પ્રણાલી</h1>
 
-  <!-- Success Message -->
   <div class="success-message" id="successMessage">
     <i class="fas fa-check-circle"></i>
     <span id="successText">માહિતી સફળતાપૂર્વક સાચવી ગઈ!</span>
   </div>
+  <div class="error-message" id="errorMessage">
+    <i class="fas fa-times-circle"></i>
+    <span id="errorText">માહિતી Import કરવામાં ભૂલ!</span>
+  </div>
 
-  <!-- Form Card -->
   <div class="form-card">
     <div class="form-title">
       <i class="fas fa-user-plus"></i>
@@ -691,27 +692,38 @@
     </form>
   </div>
 
-  <!-- Filters Card -->
   <div class="filters-card">
     <div class="filters-title">
       <i class="fas fa-filter"></i>
       ફિલ્ટર્સ અને એક્સપોર્ટ
     </div>
-    <div class="filters" style="justify-content:space-between;align-items:center">
-      <div style="display:flex;gap:8px;align-items:center">
-        <!-- DataTables will render buttons here -->
+    <div class="filters">
+      <div style="display:flex; flex-direction:column; gap:8px;">
         <div id="dtButtons"></div>
+        <div class="custom-action-buttons">
+            <button class="btn" id="exportBtn"><i class="fas fa-file-export"></i> ડેટા Export (JSON)</button>
+            <input type="file" id="importFile" accept="application/json">
+            <button class="btn" id="importBtn"><i class="fas fa-file-import"></i> ડેટા Import (JSON)</button>
+        </div>
       </div>
 
-      <div style="display:flex;gap:8px;align-items:center">
-        <select id="ageGroupFilter" title="ઉંમર જૂથથી ફિલ્ટર">
-          <option value="">બધા ઉંમર જૂથ</option>
-          <option value="(0-6mnth)">0-6 મહિના</option>
-          <option value="(6-1yr)">6-12 મહિના</option>
-          <option value="(1-3 yr)">1-3 વર્ષ</option>
-          <option value="(3-5 yr)">3-5 વર્ષ</option>
-          <option value="(5-6 yr)">5-6 વર્ષ</option>
-        </select>
+      <div class="filter-options">
+        
+        <div class="custom-dropdown">
+            <button type="button" class="dropdown-btn" id="ageGroupDropdownBtn">
+                <span id="ageGroupLabel">ઉંમર જૂથથી ફિલ્ટર કરો</span>
+                <i class="fas fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content" id="ageGroupDropdownContent">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" class="age-filter-checkbox" value="(0-6mnth)"> 0-6 મહિના</label>
+                    <label><input type="checkbox" class="age-filter-checkbox" value="(6-1yr)"> 6-12 મહિના</label>
+                    <label><input type="checkbox" class="age-filter-checkbox" value="(1-3 yr)"> 1-3 વર્ષ</label>
+                    <label><input type="checkbox" class="age-filter-checkbox" value="(3-5 yr)"> 3-5 વર્ષ</label>
+                    <label><input type="checkbox" class="age-filter-checkbox" value="(5-6 yr)"> 5-6 વર્ષ</label>
+                </div>
+            </div>
+        </div>
 
         <select id="sexFilter" title="લિંગથી ફિલ્ટર">
           <option value="">બધા (લિંગ)</option>
@@ -722,7 +734,6 @@
     </div>
   </div>
 
-  <!-- Table Card -->
   <div class="table-card">
     <div class="table-header">
       <div class="table-title">
@@ -772,7 +783,6 @@
   </footer>
 </div>
 
-<!-- Scripts: jQuery + DataTables + Buttons + export libs -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -788,28 +798,23 @@
    Theme Toggle
    ------------------------- */
 document.addEventListener('DOMContentLoaded', function() {
-  // Check for saved theme preference or default to light mode
   const currentTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', currentTheme);
   
-  // Update icon based on current theme
   const themeIcon = document.getElementById('themeIcon');
   if (currentTheme === 'dark') {
     themeIcon.classList.remove('fa-sun');
     themeIcon.classList.add('fa-moon');
   }
   
-  // Add click event to toggle theme
   const themeToggle = document.getElementById('themeToggle');
   themeToggle.addEventListener('click', function() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
-    // Update theme
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     
-    // Update icon
     if (newTheme === 'dark') {
       themeIcon.classList.remove('fa-sun');
       themeIcon.classList.add('fa-moon');
@@ -855,6 +860,7 @@ function calculateGrade(weight, height){
   const h = Number(height);
   const w = Number(weight);
   if (!h || !w) return { text: '-', cls: '' };
+  if (h === 0) return { text: 'ભૂલ', cls: 'pill bad' };
   const bmi = w / ((h/100)*(h/100));
   if (bmi < 16) return { text: 'અતિ ગંભીર', cls: 'pill bad' };
   if (bmi < 18.5) return { text: 'ગંભીર', cls: 'pill warn' };
@@ -862,11 +868,15 @@ function calculateGrade(weight, height){
 }
 
 /* -------------------------
-   Show success message
+   Show messages
    ------------------------- */
 function showSuccessMessage(message) {
   $('#successText').text(message);
   $('#successMessage').fadeIn().delay(2000).fadeOut();
+}
+function showErrorMessage(message) {
+  $('#errorText').text(message);
+  $('#errorMessage').fadeIn().delay(3000).fadeOut();
 }
 
 /* -------------------------
@@ -874,20 +884,16 @@ function showSuccessMessage(message) {
    ------------------------- */
 let table;
 function initDataTable(){
-  // If exists, destroy
   if ($.fn.DataTable.isDataTable('#childTable')) {
     table.clear().draw();
     table.destroy();
   }
 
-  // Get the screen width to determine responsive behavior
   const isMobile = window.innerWidth < 768;
-  
-  // Get selected records per page value
   const recordsPerPage = $('#recordsPerPage').val() || 10;
 
   table = $('#childTable').DataTable({
-    dom: isMobile ? 'Brtip' : 'lBrtip',          // Hide default length menu on mobile
+    dom: isMobile ? 'Brtip' : 'lBrtip',
     buttons: [
       { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> એક્સેલ' },
       { extend: 'pdfHtml5', text: '<i class="fas fa-file-pdf"></i> પીડીએફ' },
@@ -895,11 +901,11 @@ function initDataTable(){
       { extend: 'colvis', text: '<i class="fas fa-columns"></i> કૉલમ' }
     ],
     columnDefs: [
-      { targets: 14, orderable: false } // action column not sortable
+      { targets: 14, orderable: false }
     ],
     paging: true,
     pageLength: parseInt(recordsPerPage),
-    lengthChange: !isMobile, // Disable length change on mobile
+    lengthChange: !isMobile,
     lengthMenu: [[10, 15, 20], [10, 15, 20]],
     info: true,
     language: { 
@@ -916,7 +922,6 @@ function initDataTable(){
     responsive: true
   });
 
-  // Move buttons to our custom container for styling
   table.buttons().container().appendTo('#dtButtons');
 }
 
@@ -929,6 +934,7 @@ function renderRows(){
   const data = getChildren();
   data.forEach((c, idx) => {
     const grade = calculateGrade(c.weight, c.height);
+    const ageGroupText = calculateAgeGroup(c.dob); 
     const row = [
       idx + 1,
       c.name || '',
@@ -936,7 +942,7 @@ function renderRows(){
       c.sex === 'boy' ? 'છોકરો' : (c.sex === 'girl' ? 'છોકરી' : ''),
       c.dob || '',
       calculateAge(c.dob),
-      calculateAgeGroup(c.dob),
+      ageGroupText, // Column index 6
       c.mobileNumber || '',
       c.aadhaarNumber || '',
       c.apaarId || '',
@@ -989,13 +995,12 @@ function renderRows(){
     showSuccessMessage('નવા બાળકની માહિતી સફળતાપૂર્વક ઉમેરાઈ!');
   }
   setChildren(arr);
-  // reset & re-render
   this.reset(); $('#editId').val('');
   renderTableRefresh();
 });
 
 /* -------------------------
-   Edit flow
+   Edit & Delete
    ------------------------- */
 function startEdit(id){
   const arr = getChildren();
@@ -1015,9 +1020,6 @@ function startEdit(id){
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* -------------------------
-   Delete with confirmation
-   ------------------------- */
 function confirmDelete(id){
   const ok = confirm("શું તમે આ રેકોર્ડ ખરેખર ડિલીટ કરવા માંગો છો?");
   if (!ok) return;
@@ -1028,43 +1030,161 @@ function confirmDelete(id){
 }
 
 /* -------------------------
-   Filters: age & sex
+   Custom Dropdown Logic (Requirement 1)
    ------------------------- */
-function applyFiltersToTable(){
-  const ageVal = $('#ageGroupFilter').val();
-  const sexVal = $('#sexFilter').val();
-
-  table.rows().every(function(){
-    const d = this.data();
-    let show = true;
-    if (ageVal) {
-      show = (d[6] === ageVal); // ageGroup column
-    }
-    if (show && sexVal) {
-      show = (sexVal === 'boy' ? d[3] === 'છોકરો' : d[3] === 'છોકરી');
-    }
-    $(this.node()).toggle(show);
-  });
-}
- $('#ageGroupFilter, #sexFilter').on('change', applyFiltersToTable);
-
-/* -------------------------
-   Records per page selector
-   ------------------------- */
- $('#recordsPerPage').on('change', function() {
-  const recordsPerPage = $(this).val();
-  table.page.len(recordsPerPage).draw();
+$('#ageGroupDropdownBtn').on('click', function(e) {
+    $('#ageGroupDropdownContent').toggleClass('show');
+    e.stopPropagation();
 });
 
+// Close the dropdown if the user clicks outside of it
+$(document).on('click', function(e) {
+    if (!$(e.target).closest('.custom-dropdown').length) {
+        $('#ageGroupDropdownContent').removeClass('show');
+    }
+});
+
+// Update dropdown label text
+function updateAgeGroupLabel() {
+    const checkedCount = $('.age-filter-checkbox:checked').length;
+    let labelText = 'ઉંમર જૂથથી ફિલ્ટર કરો';
+    if (checkedCount > 0) {
+        labelText = `${checkedCount} જૂથ પસંદ કરેલ છે`;
+    }
+    $('#ageGroupLabel').text(labelText);
+}
+
+// Age Group Checkbox change event
+$('.age-filter-checkbox').on('change', function() {
+    updateAgeGroupLabel();
+    handleFilterChange();
+});
+$('#sexFilter').on('change', handleFilterChange);
+
+
 /* -------------------------
-   Helper to refresh table (destroy & re-render)
+   Filters: age (checkbox) & sex
+   ------------------------- */
+function applyFiltersToTable(){
+  const selectedAgeGroups = $('.age-filter-checkbox:checked').map(function(){
+      return this.value;
+  }).get(); 
+
+  const sexVal = $('#sexFilter').val();
+  
+  // Custom filter function for DataTables
+  $.fn.dataTable.ext.search.push(
+      function(settings, data, dataIndex) {
+          const ageGroup = data[6]; 
+          const sex = data[3];       
+
+          let ageMatch = true;
+          let sexMatch = true;
+
+          // 1. Age Group Filter
+          if (selectedAgeGroups.length > 0) {
+              ageMatch = selectedAgeGroups.includes(ageGroup);
+          } else {
+              ageMatch = true; // Show all if none checked
+          }
+
+          // 2. Sex Filter
+          if (sexVal && sexVal !== "") {
+              sexMatch = (sexVal === 'boy' ? sex === 'છોકરો' : sex === 'છોકરી');
+          }
+          
+          return ageMatch && sexMatch;
+      }
+  );
+
+  table.draw();
+  table.page('first').draw('page');
+  
+  $.fn.dataTable.ext.search.pop();
+}
+
+function handleFilterChange() {
+    $.fn.dataTable.ext.search.pop(); 
+    applyFiltersToTable();
+}
+
+/* -------------------------
+   Import/Export Logic (Requirement 3)
+   ------------------------- */
+
+// Export Data to JSON
+$('#exportBtn').on('click', function() {
+    const data = getChildren();
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'child_data_export_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showSuccessMessage('ડેટા JSON ફોર્મેટમાં સફળતાપૂર્વક Export થયો!');
+});
+
+// Trigger file selection on Import button click
+$('#importBtn').on('click', function() {
+    $('#importFile').click();
+});
+
+// Import Data from JSON
+$('#importFile').on('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            const importedData = JSON.parse(event.target.result);
+            if (Array.isArray(importedData)) {
+                
+                // Optional: Validate data structure before setting
+                const isValid = importedData.every(item => 
+                    item.id !== undefined && item.name !== undefined && item.dob !== undefined
+                );
+
+                if (isValid || importedData.length === 0) {
+                    // Overwrite current data with imported data
+                    setChildren(importedData);
+                    renderTableRefresh();
+                    showSuccessMessage(`કુલ ${importedData.length} રેકોર્ડ સફળતાપૂર્વક Import થયા!`);
+                } else {
+                    showErrorMessage('Import કરેલ ફાઇલમાં ડેટા ફોર્મેટ અયોગ્ય છે.');
+                }
+                
+            } else {
+                showErrorMessage('અયોગ્ય JSON ફોર્મેટ: ડેટા એરે (array) હોવો જોઈએ.');
+            }
+        } catch (error) {
+            console.error("Import Error:", error);
+            showErrorMessage('JSON ફાઇલ વાંચવામાં અથવા પારસ (parse) કરવામાં ભૂલ થઈ.');
+        } finally {
+             // Reset file input value to allow importing the same file again
+             e.target.value = '';
+        }
+    };
+    reader.readAsText(file);
+});
+
+
+/* -------------------------
+   Helper to refresh table
    ------------------------- */
 function renderTableRefresh(){
+  $.fn.dataTable.ext.search.pop(); 
   if ($.fn.DataTable.isDataTable('#childTable')) {
     table.clear().draw();
     table.destroy();
   }
   renderRows();
+  updateAgeGroupLabel(); // Update label on refresh
   applyFiltersToTable();
 }
 
@@ -1074,18 +1194,6 @@ function renderTableRefresh(){
  $(document).ready(function(){
   renderTableRefresh();
 });
-// Age group filter
-$('#ageGroupFilter').on('change', function () {
-    table.column(6).search(this.value).draw();
-    table.page('first').draw('page');  // <-- ADD THIS LINE
-});
-
-// Sex filter
-$('#sexFilter').on('change', function () {
-    table.column(3).search(this.value).draw();
-    table.page('first').draw('page');  // <-- ADD THIS LINE
-});
 </script>
 </body>
-</html>}
- 
+</html>
