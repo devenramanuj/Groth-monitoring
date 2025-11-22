@@ -880,7 +880,7 @@ function showErrorMessage(message) {
 }
 
 /* -------------------------
-   DataTable initialization
+   DataTable initialization (FIX APPLIED HERE)
    ------------------------- */
 let table;
 function initDataTable(){
@@ -890,6 +890,7 @@ function initDataTable(){
   }
 
   const isMobile = window.innerWidth < 768;
+  // *** FIXED: Get the currently selected page length value
   const recordsPerPage = $('#recordsPerPage').val() || 10;
 
   table = $('#childTable').DataTable({
@@ -904,6 +905,7 @@ function initDataTable(){
       { targets: 14, orderable: false }
     ],
     paging: true,
+    // *** FIXED: Use the selected value for pageLength
     pageLength: parseInt(recordsPerPage),
     lengthChange: !isMobile,
     lengthMenu: [[10, 15, 20], [10, 15, 20]],
@@ -1030,7 +1032,7 @@ function confirmDelete(id){
 }
 
 /* -------------------------
-   Custom Dropdown Logic (Requirement 1)
+   Custom Dropdown Logic
    ------------------------- */
 $('#ageGroupDropdownBtn').on('click', function(e) {
     $('#ageGroupDropdownContent').toggleClass('show');
@@ -1109,7 +1111,7 @@ function handleFilterChange() {
 }
 
 /* -------------------------
-   Import/Export Logic (Requirement 3)
+   Import/Export Logic
    ------------------------- */
 
 // Export Data to JSON
@@ -1175,18 +1177,40 @@ $('#importFile').on('change', function(e) {
 
 
 /* -------------------------
-   Helper to refresh table
+   Helper to refresh table (FIXED for Page Length)
    ------------------------- */
 function renderTableRefresh(){
   $.fn.dataTable.ext.search.pop(); 
+  
+  // *** FIXED: Get the current page length setting before destruction
+  const currentPageLength = $('#recordsPerPage').val(); 
+  
   if ($.fn.DataTable.isDataTable('#childTable')) {
     table.clear().draw();
     table.destroy();
   }
+  
+  // Set the correct page length back to the selector (in case it was disabled/overridden by DT)
+  $('#recordsPerPage').val(currentPageLength); 
+  
   renderRows();
-  updateAgeGroupLabel(); // Update label on refresh
+  updateAgeGroupLabel(); 
   applyFiltersToTable();
 }
+
+/* -------------------------
+   Records per page selector (FIXED: Use DataTables API to change page length)
+   ------------------------- */
+$('#recordsPerPage').on('change', function() {
+  const recordsPerPage = $(this).val();
+  if ($.fn.DataTable.isDataTable('#childTable')) {
+     // Change length using DataTables API
+     table.page.len(recordsPerPage).draw();
+  } else {
+     // If table hasn't been initialized yet (or was destroyed), refresh it
+     renderTableRefresh();
+  }
+});
 
 /* -------------------------
    Initial load
