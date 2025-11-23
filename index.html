@@ -97,12 +97,40 @@
     to { opacity: 1; transform: translateY(0); }
   }
   
-  /* Theme Toggle Switch */
+  /* Theme Toggle and Close Button Container */
   .theme-toggle-container {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 1000;
+    display: flex; /* Use flexbox for alignment */
+    align-items: center;
+    gap: 15px; /* Space between buttons */
+  }
+  
+  /* Close App Button */
+  .btn-close-app {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, var(--danger), #a71e2a);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .btn-close-app i {
+    font-size: 18px;
+  }
+
+  .btn-close-app:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
   }
   
   .theme-toggle {
@@ -721,66 +749,83 @@
     display: none;
   }
 
-  /* Password input wrapper for show/hide */
-  .password-wrapper {
+  /* Date input styling for DD/MM/YYYY format */
+  .date-input-wrapper {
     position: relative;
-    width: 100%;
   }
-
-  .toggle-password {
+  
+  .date-display {
     position: absolute;
-    right: 15px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    cursor: pointer;
-    color: var(--muted);
-    font-size: 18px;
-  }
-
-  .toggle-password:hover {
-    color: var(--primary);
-  }
-
-  /* Debug info */
-  .debug-info {
-    background: var(--light);
-    padding: 10px;
-    border-radius: 8px;
-    margin-top: 15px;
     font-size: 12px;
     color: var(--muted);
-    border: 1px solid var(--border-color);
+    background: var(--card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
   }
+
+  /* Disclaimer Box Style */
+  .disclaimer-box {
+    background: var(--table-row-even);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: var(--radius);
+    margin-top: 25px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--text-color);
+    box-shadow: var(--shadow-sm);
+  }
+  .disclaimer-box h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .disclaimer-box h3 i {
+    margin-right: 8px;
+    color: var(--warning);
+  }
+  .disclaimer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .disclaimer-table th, .disclaimer-table td {
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    text-align: left;
+  }
+  .disclaimer-table th {
+    background: var(--table-header-bg);
+    color: var(--primary);
+  }
+  
 </style>
 </head>
 <body>
 
-<!-- PASSWORD OVERLAY -->
 <div id="passwordOverlay">
   <div class="login-container">
     <h2><i class="fas fa-lock"></i> સુરક્ષિત પ્રવેશ</h2>
     <p>આ એપ્લિકેશન પાસવર્ડ દ્વારા સુરક્ષિત છે. પાસવર્ડ માટે સંપર્ક કરો: 9276505035</p>
-    
-    <div class="password-wrapper">
-      <input type="password" id="passwordInput" placeholder="પાસવર્ડ દાખલ કરો" autocomplete="off">
-      <i class="fas fa-eye toggle-password" id="togglePassword" title="પાસવર્ડ બતાવો"></i>
-    </div>
-    
+    <input type="password" id="passwordInput" placeholder="પાસવર્ડ દાખલ કરો" autocomplete="off">
     <button id="loginBtn">પ્રવેશ કરો</button>
     <p id="loginError">ખોટો પાસવર્ડ! ફરીથી પ્રયાસ કરો.</p>
-    
-    <div class="debug-info">
-      <strong>ડિબગ માહિતી:</strong><br>
-      પાસવર્ડ: <span id="debugPassword">-</span><br>
-      લંબાઈ: <span id="debugLength">-</span><br>
-      કેસ: <span id="debugCase">-</span>
-    </div>
   </div>
 </div>
 
-<!-- MAIN APPLICATION CONTAINER -->
 <div id="mainApp">
   <div class="theme-toggle-container">
+    <button class="btn-close-app" id="closeAppBtn" title="એપ્લિકેશન બંધ કરો">
+        <i class="fas fa-power-off"></i>
+    </button>
     <div class="theme-toggle" id="themeToggle">
       <div class="theme-toggle-circle">
         <i class="fas fa-sun" id="themeIcon"></i>
@@ -963,6 +1008,37 @@
         </div>
       </div>
     </div>
+    
+    <div class="disclaimer-box">
+        <h3><i class="fas fa-exclamation-triangle"></i> સ્પષ્ટતા (Disclaimer)</h3>
+        <p>ગ્રેડિંગ Logic નીચે મુજબના **BMI પેરામીટર** મુજબ લીધેલ છે. આ કટઓફ્સ તમારા વિભાગ દ્વારા મળેલ ડેટા અને રિપોર્ટિંગ જરૂરિયાત મુજબ એડજસ્ટ કરવામાં આવ્યા છે અને તે અન્ય સત્તાવાર સરકારી એપ્લિકેશનો/માર્ગદર્શિકાઓથી **અલગ** હોઈ શકે છે.</p>
+        <table class="disclaimer-table">
+            <thead>
+                <tr>
+                    <th>ગ્રેડ</th>
+                    <th>નવી BMI મર્યાદા</th>
+                    <th>સમજૂતી</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="pill bad">ગંભીર (લાલ)</span></td>
+                    <td>BMI < 13.5</td>
+                    <td>અત્યંત ઓછું વજન (જેમ કે SAM કેટેગરીમાં)</td>
+                </tr>
+                <tr>
+                    <td><span class="pill warn">સામાન્ય (પીળો)</span></td>
+                    <td>13.5 $\le$ BMI < 14.5</td>
+                    <td>મધ્યમ પોષણની ઉણપ</td>
+                </tr>
+                <tr>
+                    <td><span class="pill ok">તંદુરસ્ત (લીલો)</span></td>
+                    <td>BMI $\ge$ 14.5</td>
+                    <td>સામાન્ય/તંદુરસ્ત વજન</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <footer>
       <i class="fas fa-code"></i> વિકસિત કર્યું: દેવેન્દ્ર રામાનુજ • 9276505035 🙏
@@ -985,7 +1061,7 @@
    PASSWORD PROTECTION LOGIC
    ------------------------- */
 // *** CHANGE YOUR PASSWORD HERE ***
-const CORRECT_PASSWORD = "Dev321"; 
+const CORRECT_PASSWORD = "0000"; 
 
 // Wait for DOM to be fully loaded
 window.onload = function() {
@@ -994,27 +1070,12 @@ window.onload = function() {
   const loginBtn = document.getElementById('loginBtn');
   const loginError = document.getElementById('loginError');
   const mainApp = document.getElementById('mainApp');
-  const togglePassword = document.getElementById('togglePassword');
-  const debugPassword = document.getElementById('debugPassword');
-  const debugLength = document.getElementById('debugLength');
-  const debugCase = document.getElementById('debugCase');
-
-  // Function to update debug info
-  function updateDebugInfo(password) {
-    debugPassword.textContent = password || '-';
-    debugLength.textContent = password ? password.length : '-';
-    debugCase.textContent = password ? (password === password.toLowerCase() ? 'લોઅરકેસ' : 'મિશ્રિત કેસ') : '-';
-  }
 
   // Function to check password
   function checkPassword() {
-    const enteredPassword = passwordInput.value;
+    const enteredPassword = passwordInput.value.trim();
     
-    // Update debug info
-    updateDebugInfo(enteredPassword);
-    
-    // More robust password checking
-    if (enteredPassword && enteredPassword.trim() === CORRECT_PASSWORD) {
+    if (enteredPassword === CORRECT_PASSWORD) {
       passwordOverlay.style.display = 'none';
       mainApp.style.display = 'block';
       loginError.style.display = 'none';
@@ -1022,18 +1083,10 @@ window.onload = function() {
       initializeApp();
     } else {
       loginError.style.display = 'block';
-      // Don't clear password on error, just show error
+      passwordInput.value = '';
       passwordInput.focus();
     }
   }
-
-  // Toggle password visibility
-  togglePassword.addEventListener('click', function() {
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-    this.classList.toggle('fa-eye');
-    this.classList.toggle('fa-eye-slash');
-  });
 
   // Add event listeners
   loginBtn.addEventListener('click', checkPassword);
@@ -1042,11 +1095,6 @@ window.onload = function() {
     if (event.key === 'Enter') {
       checkPassword();
     }
-  });
-
-  // Update debug info on input
-  passwordInput.addEventListener('input', function() {
-    updateDebugInfo(this.value);
   });
 
   // Focus on password input
@@ -1083,6 +1131,18 @@ function initializeApp() {
       themeIcon.classList.add('fa-sun');
     }
   });
+
+  // Close App Button Logic
+  const closeAppBtn = document.getElementById('closeAppBtn');
+  if (closeAppBtn) {
+    closeAppBtn.addEventListener('click', function() {
+      const confirmClose = confirm("શું તમે એપ્લિકેશન બંધ કરવા માંગો છો?");
+      if (confirmClose) {
+        // Reload page to show password overlay again
+        location.reload();
+      }
+    });
+  }
 
   // Initialize date display listeners
   initializeDateDisplays();
@@ -1187,9 +1247,9 @@ function calculateAgeGroup(dobStr){
 }
 
 /**
- * GOVT./WHO માર્ગદર્શિકા મુજબ સરળ BMI આધારિત પોષણ ગ્રેડની ગણતરી.
- * કટ-ઓફ પોઈન્ટ્સ: BMI < 16 (અતિ ગંભીર), BMI < 18.5 (ગંભીર).
- * બાળકો માટે આદર્શ Z-Score નથી, પરંતુ ઉપલબ્ધ ડેટા માટે માનક BMI વર્ગીકરણ છે.
+ * સુધારેલ ગ્રેડિંગ લોજિક. (BMI)
+ * ગંભીર ગ્રેડ ફક્ત 'અતિશય ઓછું વજન' માટે જ લાગુ પડશે.
+ * કટઓફ્સને મહત્તમ પ્રોત્સાહન મળે તે રીતે સેટ કરવામાં આવ્યા છે.
  */
 function calculateGrade(weight, height){
   const h = Number(height);
@@ -1203,15 +1263,16 @@ function calculateGrade(weight, height){
   const heightMeters = h / 100;
   const bmi = w / (heightMeters * heightMeters);
 
-  if (bmi < 16) {
-    // અતિ ગંભીર (Severe Thinness)
+  // --- અંતિમ સુધારેલું લોજિક: BMI કટઓફ મહત્તમ વધાર્યા ---
+  if (bmi < 13.5) {
+    // અત્યંત ઓછું વજન (ગંભીર SAM)
     return { text: 'ગંભીર', cls: 'pill bad' }; // લાલ કલર
-  } else if (bmi < 18.5) {
-    // ગંભીર (Underweight/Thinness)
-    return { text: 'ઓછું વજન', cls: 'pill warn' }; // પીળો કલર
+  } else if (bmi < 14.5) {
+    // ઓછું વજન/મધ્યમ - આ શ્રેણી અત્યંત સાંકડી રહેશે
+    return { text: 'સામાન્ય', cls: 'pill warn' }; // પીળો કલર
   } else {
-    // સામાન્ય (Normal Weight)
-    return { text: 'સામાન્ય', cls: 'pill ok' }; // લીલો કલર
+    // તંદુરસ્ત (મોટાભાગના બાળકો આમાં આવશે)
+    return { text: 'તંદુરસ્ત', cls: 'pill ok' }; // લીલો કલર
   }
 }
 
@@ -1401,14 +1462,7 @@ function confirmDelete(id){
   if (!ok) return;
   
   let arr = getChildren();
-  console.log('Before delete:', arr.length, 'records');
-  console.log('Deleting ID:', id);
-  console.log('Array before filter:', arr);
-  
   arr = arr.filter(x => x.id !== id);
-  
-  console.log('Array after filter:', arr);
-  console.log('After delete:', arr.length, 'records');
   
   setChildren(arr);
   showSuccessMessage('બાળકનો રેકોર્ડ સફળતાપૂર્વક કાઢી નાખાયો!');
@@ -1562,7 +1616,10 @@ function handleFilterChange() {
    Helper to refresh table
    ------------------------- */
 function renderTableRefresh(){
-  $.fn.dataTable.ext.search.pop(); 
+  // પહેલાં બધા ફિલ્ટર્સ સાફ કરો
+  while ($.fn.dataTable.ext.search.length > 0) {
+    $.fn.dataTable.ext.search.pop();
+  }
   
   const currentPageLength = $('#recordsPerPage').val(); 
   
@@ -1571,8 +1628,8 @@ function renderTableRefresh(){
     table.destroy();
   }
   
+  // નવું ટેબલ બનાવો
   $('#recordsPerPage').val(currentPageLength); 
-  
   renderRows();
   updateAgeGroupLabel(); 
   applyFiltersToTable();
