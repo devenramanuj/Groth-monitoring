@@ -27,7 +27,7 @@
     --radius: 12px;
     --shadow: 0 10px 30px rgba(0,0,0,0.1);
     --shadow-sm: 0 4px 6px rgba(0,0,0,0.07);
-    --text-color: #333;
+    --text-color: #333; /* Key for visibility */
     --header-bg: linear-gradient(90deg, #6a11cb, #2575fc);
     --form-bg: linear-gradient(to right, #ffffff, #f8f9ff);
     --border-color: #eaeef7;
@@ -39,9 +39,10 @@
     --toggle-circle: #ffffff;
     --checkbox-border: #ccc;
     --checkbox-checked: var(--primary);
+    --input-bg: #ffffff; /* Input background */
   }
 
-  /* CSS Variables for Dark Theme */
+  /* CSS Variables for Dark Theme - FIXED COLORS */
   [data-theme="dark"] {
     --bg: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     --card: #1e1e2e;
@@ -58,7 +59,7 @@
     --radius: 12px;
     --shadow: 0 10px 30px rgba(0,0,0,0.3);
     --shadow-sm: 0 4px 6px rgba(0,0,0,0.2);
-    --text-color: #e5e7eb;
+    --text-color: #e5e7eb; /* FIXED: Light text for dark background */
     --header-bg: linear-gradient(90deg, #bb86fc, #03dac6);
     --form-bg: linear-gradient(to right, #1e1e2e, #2d2d44);
     --border-color: #374151;
@@ -70,6 +71,7 @@
     --toggle-circle: #f9fafb;
     --checkbox-border: #555;
     --checkbox-checked: var(--primary);
+    --input-bg: #2d2d44; /* FIXED: Darker input background for contrast */
   }
 
   *{box-sizing:border-box}
@@ -178,7 +180,7 @@
       padding: 10px 15px;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      background: var(--card);
+      background: var(--input-bg); /* Use input-bg for consistency */
       color: var(--text-color);
       text-align: left;
       cursor: pointer;
@@ -233,7 +235,7 @@
       -webkit-appearance: none;
       cursor: pointer;
       transition: all 0.2s ease;
-      background: var(--card);
+      background: var(--input-bg); /* Use input-bg for checkbox */
   }
   .checkbox-group input[type="checkbox"]:checked {
       background-color: var(--checkbox-checked);
@@ -337,9 +339,9 @@
     padding:12px 15px;
     border:1px solid var(--border-color);
     border-radius:8px;
-    background:var(--card);
+    background:var(--input-bg); /* Use variable for input background */
     font-size:14px;
-    color:var(--text-color);
+    color:var(--text-color); /* Use variable for input text color */
     transition:all 0.3s ease;
   }
   
@@ -408,9 +410,9 @@
     padding:10px 15px;
     border-radius:8px;
     border:1px solid var(--border-color);
-    background:var(--card);
+    background:var(--input-bg); /* Use variable for select background */
     min-width:150px;
-    color:var(--text-color);
+    color:var(--text-color); /* Use variable for select text color */
   }
   
   /* Custom Import/Export Buttons */
@@ -468,7 +470,7 @@
     padding: 4px 8px;
     border-radius: 4px;
     border: 1px solid var(--border-color);
-    background: var(--card);
+    background: var(--input-bg); /* Use variable for select background */
     color: var(--text-color);
     min-width: auto;
     font-size: 12px;
@@ -527,6 +529,12 @@
   .pill.ok{background:var(--success)}
   .pill.warn{background:var(--warning);color:#333}
   .pill.bad{background:var(--danger)}
+  
+  /* Dark Mode specific text color for warning pill text */
+  [data-theme="dark"] .pill.warn {
+      color: var(--dark); /* Ensure text is dark on yellow warning pill in dark mode */
+  }
+
   /* Action buttons */
   .action-btn{
     border:none;
@@ -727,9 +735,9 @@
     padding: 12px 15px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--card);
+    background: var(--input-bg); /* Use variable for input background */
     font-size: 16px;
-    color: var(--text-color);
+    color: var(--text-color); /* Use variable for input text color */
     margin-bottom: 20px;
     box-sizing: border-box;
   }
@@ -776,7 +784,7 @@
     transform: translateY(-50%);
     font-size: 12px;
     color: var(--muted);
-    background: var(--card);
+    background: var(--input-bg); /* Use variable for input background */
     padding: 2px 6px;
     border-radius: 4px;
     pointer-events: none;
@@ -1105,7 +1113,7 @@
     
     <div class="disclaimer-box">
         <h3><i class="fas fa-exclamation-triangle"></i> સ્પષ્ટતા (Disclaimer)</h3>
-        <p>ગ્રેડિંગ Logic નીચે મુજબના **BMI પેરામીટર** મુજબ લીધેલ છે. આ કટઓફ્સ તમારા વિભાગ દ્વારા મળેલ ડેટા અને રિપોર્ટિંગ જરૂરિયાત મુજબ એડજસ્ટ કરવામાં આવ્યા છે અને તે અન્ય સત્તાવાર સરકારી એપ્લિકેશનો/માર્ગદર્શિકાઓથી **અલગ** હોઈ શકે છે.</p>
+        <p>ગ્રેડિંગ Logic નીચે મુજબના **BMI પેરામીટર** મુજબ લીધેલ છે. આ કટઓફ્સ તમારા વિભાગ દ્વારા મળેલ ડેટા અને રિપોર્ટિંગ જરૂરિયાત મુજબ એડજસ્ટ કરવામાં આવ્યા છે અને તે અન્ય સત્તાવાર સરકારી એપ્લિકેશનો/માર્ગદર્શિકાઓથી **અલગ** હોઈ શકે છે।</p>
         <table class="disclaimer-table">
             <thead>
                 <tr>
@@ -2023,7 +2031,5 @@ function renderTableRefresh(){
   }
 });
 </script>
-</body>
-</html></script>
 </body>
 </html>
