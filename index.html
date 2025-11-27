@@ -536,7 +536,10 @@
     font-weight:600;
     cursor:pointer;
     margin-right:5px;
+    margin-bottom: 5px;
     transition:all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
   }
   .action-btn i {
     margin-right: 5px;
@@ -557,6 +560,18 @@
     font-weight:600;
     transition:all 0.3s ease;
   }
+
+  /* Progress Indicators */
+  .progress-indicator {
+      font-size: 14px;
+      font-weight: bold;
+      margin-left: 5px;
+      display: inline-block;
+      white-space: nowrap;
+  }
+  .progress-indicator.increase { color: var(--success); }
+  .progress-indicator.decrease { color: var(--danger); }
+  .progress-indicator.same { color: var(--warning); }
   
   /* Responsive adjustments (Mobile-Friendly) */
   @media(max-width:768px){
@@ -806,6 +821,87 @@
     background: var(--table-header-bg);
     color: var(--primary);
   }
+
+  .measurement-history-btn {
+      background: none;
+      border: 1px solid var(--info);
+      color: var(--info);
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 5px;
+      display: inline-block;
+      transition: all 0.2s;
+  }
+  .measurement-history-btn:hover {
+      background: var(--info);
+      color: white;
+  }
+  
+  /* Modal Styles */
+  .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+  }
+  .modal-content {
+      background-color: var(--card);
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 80%;
+      max-width: 600px;
+      position: relative;
+      animation: modalOpen 0.3s ease-in-out;
+  }
+  .modal-close {
+      color: var(--danger);
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      transition: all 0.2s;
+  }
+  .modal-close:hover, .modal-close:focus {
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+  }
+  .modal-content h2 {
+      color: var(--primary);
+      margin-top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+  }
+  .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+  .modal-table th, .modal-table td {
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      text-align: left;
+  }
+  .modal-table th {
+      background: var(--table-header-bg);
+      color: var(--primary);
+      font-size: 14px;
+  }
+  .modal-table td {
+      font-size: 14px;
+  }
+  @keyframes modalOpen {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
   
 </style>
 </head>
@@ -851,7 +947,7 @@
     <div class="form-card">
       <div class="form-title">
         <i class="fas fa-user-plus"></i>
-        બાળકની માહિતી ઉમેરો
+        બાળકની માહિતી ઉમેરો / અપડેટ માપણી
       </div>
       <form id="childForm">
         <input type="hidden" id="editId">
@@ -898,7 +994,7 @@
           <input id="abhaId" type="text" placeholder="જો હોય તો">
         </div>
         <div class="form-group">
-          <label for="weightDate"><i class="fas fa-calendar-check"></i> વજન કર્યા તારીખ</label>
+          <label for="weightDate"><i class="fas fa-calendar-check"></i> વજન/ઊંચાઈ માપણી તારીખ</label>
           <div class="date-input-wrapper">
             <input id="weightDate" type="date" required>
             <span class="date-display" id="weightDateDisplay"></span>
@@ -917,7 +1013,7 @@
 
         <button class="btn-primary" type="submit">
           <i class="fas fa-save"></i>
-          બાળક ઉમેરો / અપડેટ કરો
+          બાળક માહિતી/માપણી ઉમેરો
         </button>
       </form>
     </div>
@@ -993,13 +1089,11 @@
                 <th>ઉંમર</th>
                 <th>ઉંમરજૂથ</th>
                 <th>મોબાઇલ</th>
-                <th>આધાર</th>
-                <th>અપાર ID</th>
-                <th>આભા ID</th>
-                <th>વજન કર્યા તારીખ</th>
-                <th>વજન</th>
-                <th>ઊંચાઈ</th>
+                <th>છેલ્લી માપણી તારીખ</th>
+                <th>વજન (કિગ્રા)</th>
+                <th>ઊંચાઈ (સેમી)</th>
                 <th>ગ્રેડ</th>
+                <th>વજન પ્રગતિ</th>
                 <th>ક્રિયા</th>
               </tr>
             </thead>
@@ -1045,6 +1139,26 @@
     </footer>
   </div>
 </div>
+
+<div id="historyModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h2 id="modalChildName">માપણી ઇતિહાસ</h2>
+        <table class="modal-table">
+            <thead>
+                <tr>
+                    <th>તારીખ</th>
+                    <th>વજન (કિગ્રા)</th>
+                    <th>ઊંચાઈ (સેમી)</th>
+                    <th>ગ્રેડ</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -1147,6 +1261,12 @@ function initializeApp() {
   // Initialize date display listeners
   initializeDateDisplays();
 
+  // Set today's date as default for weightDate
+  const today = new Date().toISOString().split('T')[0];
+  $('#weightDate').val(today);
+  updateDateDisplay('weightDate', 'weightDateDisplay');
+
+
   // Initialize rest of app
   renderTableRefresh();
 }
@@ -1159,13 +1279,14 @@ function formatDate(dateStr) {
     if (!dateStr) return '';
     try {
         const [year, month, day] = dateStr.split('-');
-        return `${day}/${month}/${year}`;
+        // Ensure day and month are padded for consistent DD/MM/YYYY format
+        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
     } catch (e) {
         return dateStr; // return original if parsing fails
     }
 }
 
-// Function to format date from DD/MM/YYYY to YYYY-MM-DD
+// Function to format date from DD/MM/YYYY to YYYY-MM-DD (Used only if needed to go back to input format)
 function formatDateForInput(dateStr) {
     if (!dateStr) return '';
     try {
@@ -1211,7 +1332,30 @@ function initializeDateDisplays() {
 /* -------------------------
    LocalStorage helpers
    ------------------------- */
-function getChildren(){ return JSON.parse(localStorage.getItem('childrenData')||'[]'); }
+function getChildren(){ 
+  // Initialize 'measurements' array if not present, for compatibility with old data structure
+  const children = JSON.parse(localStorage.getItem('childrenData')||'[]');
+  return children.map(child => {
+    // Check if the old single measurement structure exists (only if 'measurements' array is missing)
+    if (!child.measurements || !Array.isArray(child.measurements)) {
+      const measurement = {
+        date: child.weightDate || '',
+        weight: child.weight !== undefined ? child.weight : null,
+        height: child.height !== undefined ? child.height : null,
+      };
+      
+      // Clean up old properties if they exist
+      delete child.weight;
+      delete child.height;
+      delete child.weightDate;
+
+      // Add the measurements array (only if there was old data to convert)
+      child.measurements = measurement.date ? [measurement] : [];
+    }
+    return child;
+  });
+}
+
 function setChildren(arr){ localStorage.setItem('childrenData', JSON.stringify(arr)); }
 
 /* -------------------------
@@ -1247,34 +1391,98 @@ function calculateAgeGroup(dobStr){
 }
 
 /**
- * સુધારેલ ગ્રેડિંગ લોજિક. (BMI)
- * ગંભીર ગ્રેડ ફક્ત 'અતિશય ઓછું વજન' માટે જ લાગુ પડશે.
- * કટઓફ્સને મહત્તમ પ્રોત્સાહન મળે તે રીતે સેટ કરવામાં આવ્યા છે.
+ * ગ્રેડિંગ લોજિક. (BMI)
  */
 function calculateGrade(weight, height){
   const h = Number(height);
   const w = Number(weight);
   
-  // ઇનપુટ ભૂલ તપાસો
-  if (!h || !w || isNaN(h) || isNaN(w)) return { text: '-', cls: '' };
-  if (h <= 0) return { text: 'ભૂલ', cls: 'pill bad' };
+  if (!h || !w || isNaN(h) || isNaN(w) || h <= 0) return { text: '-', cls: '' };
 
-  // BMI (બોડી માસ ઇન્ડેક્સ) ની ગણતરી કરો: kg/m^2
   const heightMeters = h / 100;
   const bmi = w / (heightMeters * heightMeters);
 
-  // --- અંતિમ સુધારેલું લોજિક: BMI કટઓફ મહત્તમ વધાર્યા ---
+  // કટઓફ્સ: BMI < 13.5 (Bad), 13.5 <= BMI < 14.5 (Warn), BMI >= 14.5 (OK)
   if (bmi < 13.5) {
-    // અત્યંત ઓછું વજન (ગંભીર SAM)
-    return { text: 'ગંભીર', cls: 'pill bad' }; // લાલ કલર
+    return { text: 'ગંભીર', cls: 'pill bad' }; 
   } else if (bmi < 14.5) {
-    // ઓછું વજન/મધ્યમ - આ શ્રેણી અત્યંત સાંકડી રહેશે
-    return { text: 'સામાન્ય', cls: 'pill warn' }; // પીળો કલર
+    return { text: 'સામાન્ય', cls: 'pill warn' }; 
   } else {
-    // તંદુરસ્ત (મોટાભાગના બાળકો આમાં આવશે)
-    return { text: 'તંદુરસ્ત', cls: 'pill ok' }; // લીલો કલર
+    return { text: 'તંદુરસ્ત', cls: 'pill ok' }; 
   }
 }
+
+/**
+ * પ્રગતિની ગણતરી (વજન)
+ */
+function calculateProgress(measurements, latestDate) {
+    if (!measurements || measurements.length < 2) {
+        return { text: 'નવો રેકોર્ડ', cls: '' };
+    }
+
+    // Sort measurements by date descending (most recent first)
+    const sortedMeasurements = [...measurements].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Find the latest valid measurement matching the latestDate
+    const latest = sortedMeasurements.find(m => m.date === latestDate);
+    if (!latest || latest.weight === null || latest.weight === undefined) {
+        return { text: 'N/A', cls: '' };
+    }
+
+    const latestIndex = sortedMeasurements.findIndex(m => m.date === latestDate);
+
+    // Find the 'previous month' measurement: the most recent valid weight measurement
+    // that is at least 30 days older than the 'latest' measurement.
+    let previousMonthMeasurement = null;
+    const latestTimestamp = new Date(latest.date).getTime();
+    const thirtyDaysAgo = latestTimestamp - (30 * 24 * 60 * 60 * 1000);
+
+    for (let i = latestIndex + 1; i < sortedMeasurements.length; i++) {
+        const currentM = sortedMeasurements[i];
+        const currentTimestamp = new Date(currentM.date).getTime();
+        
+        // Ensure weight is valid and measurement date is at least 30 days older
+        if (currentM.weight !== null && currentM.weight !== undefined && currentTimestamp < thirtyDaysAgo) {
+            previousMonthMeasurement = currentM;
+            break;
+        }
+    }
+
+    if (!previousMonthMeasurement) {
+        return { text: 'નવો રેકોર્ડ', cls: '' };
+    }
+
+    const latestWeight = Number(latest.weight);
+    const prevWeight = Number(previousMonthMeasurement.weight);
+
+    if (isNaN(latestWeight) || isNaN(prevWeight)) {
+        return { text: 'વજન ખૂટે છે', cls: '' };
+    }
+    
+    const diff = latestWeight - prevWeight;
+    const diffText = Math.abs(diff).toFixed(1) + ' કિગ્રા';
+
+    if (diff > 0.1) {
+        return { 
+            text: `+${diffText}`, 
+            cls: 'progress-indicator increase',
+            icon: '▲' 
+        };
+    } else if (diff < -0.1) {
+        return { 
+            text: `-${diffText}`, 
+            cls: 'progress-indicator decrease',
+            icon: '▼' 
+        };
+    } else {
+        return { 
+            text: 'કોઈ ફેરફાર નહીં', 
+            cls: 'progress-indicator same',
+            icon: '–' 
+        };
+    }
+}
+
 
 /* -------------------------
    Show messages
@@ -1309,9 +1517,9 @@ function initDataTable(){
       { extend: 'print', text: '<i class="fas fa-print"></i> છાપો' },
       { extend: 'colvis', text: '<i class="fas fa-columns"></i> કૉલમ' }
     ],
-    // 16 total columns
+    // 14 total columns (excluding Aadhaar, Apaar, Abha for brevity in mobile)
     columnDefs: [
-      { targets: 15, orderable: false }
+      { targets: 13, orderable: false } // Action column
     ],
     paging: true,
     pageLength: parseInt(recordsPerPage),
@@ -1343,8 +1551,29 @@ function renderRows(){
   initDataTable();
   const data = getChildren();
   data.forEach((c, idx) => {
-    const grade = calculateGrade(c.weight, c.height);
+    // Get latest measurement
+    const measurements = c.measurements || [];
+    const latestMeasurement = measurements.length > 0 
+      ? measurements[0] // Since measurements are sorted descending in the save step
+      : { date: '', weight: null, height: null };
+
+    const grade = calculateGrade(latestMeasurement.weight, latestMeasurement.height);
+    const progress = calculateProgress(measurements, latestMeasurement.date);
     const ageGroupText = calculateAgeGroup(c.dob); 
+    
+    // Check if measurement fields are empty
+    const weightDisplay = latestMeasurement.weight !== undefined && latestMeasurement.weight !== null ? latestMeasurement.weight : '-';
+    const heightDisplay = latestMeasurement.height !== undefined && latestMeasurement.height !== null ? latestMeasurement.height : '-';
+
+    // The 'action' column includes the history button now
+    const actionCell = `
+      <button class="action-btn edit" data-id="${c.id}"><i class="fas fa-edit"></i> સુધારો</button>
+      <button class="action-btn del" data-id="${c.id}"><i class="fas fa-trash"></i> કાઢો</button>
+      <button class="measurement-history-btn" data-id="${c.id}" data-name="${c.name}">
+          <i class="fas fa-history"></i> ઇતિહાસ (${measurements.length})
+      </button>
+    `;
+
     const row = [
       idx + 1,
       c.name || '',
@@ -1354,21 +1583,19 @@ function renderRows(){
       calculateAge(c.dob),
       ageGroupText, // Column index 6
       c.mobileNumber || '',
-      c.aadhaarNumber || '',
-      c.apaarId || '',
-      c.abhaId || '',
-      formatDate(c.weightDate), // Display in DD/MM/YYYY format
-      c.weight !== undefined ? c.weight : '', // Column index 12
-      c.height !== undefined ? c.height : '', // Column index 13
-      `<span class="${grade.cls}">${grade.text}</span>`, // Column index 14
-      `<button class="action-btn edit" data-id="${c.id}"><i class="fas fa-edit"></i> સુધારો</button>
-       <button class="action-btn del" data-id="${c.id}"><i class="fas fa-trash"></i> કાઢો</button>` // Column index 15
+      // New columns for latest measurement
+      formatDate(latestMeasurement.date), // Column index 8
+      weightDisplay, // Column index 9
+      heightDisplay, // Column index 10
+      `<span class="${grade.cls}">${grade.text}</span>`, // Column index 11
+      `<span class="${progress.cls}">${progress.text} ${progress.icon || ''}</span>`, // Column index 12
+      actionCell // Column index 13
     ];
     table.row.add(row).draw(false);
   });
   $('#tableLoader').hide();
 
-  // Setup event listeners for edit and delete buttons
+  // Setup event listeners for edit, delete and history buttons
   setupTableEventListeners();
 }
 
@@ -1377,7 +1604,7 @@ function renderRows(){
    ------------------------- */
 function setupTableEventListeners() {
   // Remove existing event listeners to prevent duplicates
-  $('#childTable tbody').off('click', '.edit, .del');
+  $('#childTable tbody').off('click', '.edit, .del, .measurement-history-btn');
   
   // Add new event listeners
   $('#childTable tbody').on('click', '.edit', function(e){
@@ -1391,7 +1618,58 @@ function setupTableEventListeners() {
     const id = Number($(this).data('id')); 
     confirmDelete(id);
   });
+
+  $('#childTable tbody').on('click', '.measurement-history-btn', function(e){
+    e.preventDefault();
+    const id = Number($(this).data('id')); 
+    const name = $(this).data('name');
+    showMeasurementHistory(id, name);
+  });
 }
+
+/* -------------------------
+   Modal Logic for History
+   ------------------------- */
+const modal = document.getElementById("historyModal");
+const closeBtn = document.querySelector(".modal-close");
+
+closeBtn.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function showMeasurementHistory(id, name) {
+    const children = getChildren();
+    const child = children.find(c => c.id === id);
+    const historyBody = document.getElementById('historyTableBody');
+    historyBody.innerHTML = '';
+    
+    if (!child || !child.measurements || child.measurements.length === 0) {
+        historyBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">કોઈ માપણી ઇતિહાસ નથી.</td></tr>';
+    } else {
+        // Measurements array is already sorted descending by date from the save step
+        const sortedMeasurements = child.measurements;
+        
+        sortedMeasurements.forEach(m => {
+            const grade = calculateGrade(m.weight, m.height);
+            const row = historyBody.insertRow();
+            
+            row.insertCell().textContent = formatDate(m.date);
+            row.insertCell().textContent = m.weight !== undefined && m.weight !== null ? m.weight + ' કિગ્રા' : '-';
+            row.insertCell().textContent = m.height !== undefined && m.height !== null ? m.height + ' સેમી' : '-';
+            row.insertCell().innerHTML = `<span class="${grade.cls}">${grade.text}</span>`;
+        });
+    }
+
+    document.getElementById('modalChildName').textContent = `${name} - માપણી ઇતિહાસ`;
+    modal.style.display = "block";
+}
+
 
 /* -------------------------
    Form handlers: add / edit
@@ -1399,34 +1677,95 @@ function setupTableEventListeners() {
  $('#childForm').on('submit', function(e){
   e.preventDefault();
   const editId = $('#editId').val();
-  const child = {
-    id: editId ? Number(editId) : Date.now(),
-    name: $('#name').val().trim(),
-    motherName: $('#motherName').val().trim(),
-    sex: $('#sex').val(),
-    dob: $('#dob').val(), // Already in YYYY-MM-DD format
-    mobileNumber: $('#mobileNumber').val().trim(),
-    aadhaarNumber: $('#aadhaarNumber').val().trim(),
-    apaarId: $('#apaarId').val().trim(),
-    abhaId: $('#abhaId').val().trim(),
-    weightDate: $('#weightDate').val(), // Already in YYYY-MM-DD format
-    weight: $('#weight').val(),
-    height: $('#height').val()
-  };
+  const name = $('#name').val().trim();
+  const motherName = $('#motherName').val().trim();
+  const sex = $('#sex').val();
+  const dob = $('#dob').val(); 
+  const mobileNumber = $('#mobileNumber').val().trim();
+  const aadhaarNumber = $('#aadhaarNumber').val().trim();
+  const apaarId = $('#apaarId').val().trim();
+  const abhaId = $('#abhaId').val().trim();
+  const weightDate = $('#weightDate').val(); 
+  const weight = $('#weight').val();
+  const height = $('#height').val();
 
   let arr = getChildren();
-  if (editId) {
-    arr = arr.map(x => x.id === child.id ? child : x);
-    showSuccessMessage('બાળકની માહિતી સફળતાપૂર્વક અપડેટ કરાઈ!');
+  let childIndex = editId ? arr.findIndex(x => x.id === Number(editId)) : -1;
+  let child = childIndex !== -1 ? arr[childIndex] : null;
+
+  // Measurement is valid only if date, weight AND height are present
+  const isMeasurementValid = weightDate && weight && height;
+
+  const newMeasurement = {
+      date: weightDate,
+      weight: weight ? Number(weight) : null,
+      height: height ? Number(height) : null,
+  };
+
+  if (child) {
+    // --- Existing Child: Update Basic Info and Measurements ---
+    
+    // 1. Update basic info regardless of measurement fields
+    child.name = name;
+    child.motherName = motherName;
+    child.sex = sex;
+    child.dob = dob;
+    child.mobileNumber = mobileNumber;
+    child.aadhaarNumber = aadhaarNumber;
+    child.apaarId = apaarId;
+    child.abhaId = abhaId;
+    
+    let isMeasurementUpdated = false;
+
+    if (isMeasurementValid) {
+        let measurementIndex = child.measurements.findIndex(m => m.date === weightDate);
+        
+        if (measurementIndex !== -1) {
+            // Update existing measurement for the same date
+            child.measurements[measurementIndex] = newMeasurement;
+            showSuccessMessage('બાળકની માહિતી અને માપણી સફળતાપૂર્વક અપડેટ કરાઈ!');
+            isMeasurementUpdated = true;
+        } else {
+            // Add new measurement
+            child.measurements.push(newMeasurement);
+            showSuccessMessage('નવી માપણી સફળતાપૂર્વક ઉમેરાઈ!');
+            isMeasurementUpdated = true;
+        }
+    } else if (editId) {
+        showSuccessMessage('બાળકની મૂળભૂત માહિતી સફળતાપૂર્વક અપડેટ કરાઈ!');
+    }
   } else {
+    // --- New Child: Create New Record ---
+    child = {
+      id: Date.now(),
+      name: name,
+      motherName: motherName,
+      sex: sex,
+      dob: dob,
+      mobileNumber: mobileNumber,
+      aadhaarNumber: aadhaarNumber,
+      apaarId: apaarId,
+      abhaId: abhaId,
+      measurements: isMeasurementValid ? [newMeasurement] : []
+    };
     arr.push(child);
     showSuccessMessage('નવા બાળકની માહિતી સફળતાપૂર્વક ઉમેરાઈ!');
   }
+  
+  // Sort measurements by date descending (most recent first) before saving
+  if(child && child.measurements) {
+      child.measurements.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+  
   setChildren(arr);
-  this.reset(); $('#editId').val('');
-  // Clear date displays
+  this.reset(); 
+  $('#editId').val('');
+  // Clear date displays and set default for next entry
   document.getElementById('dobDisplay').style.display = 'none';
-  document.getElementById('weightDateDisplay').style.display = 'none';
+  const today = new Date().toISOString().split('T')[0];
+  $('#weightDate').val(today);
+  updateDateDisplay('weightDate', 'weightDateDisplay');
+
   renderTableRefresh();
 });
 
@@ -1437,6 +1776,10 @@ function startEdit(id){
   const arr = getChildren();
   const c = arr.find(x => x.id === id);
   if (!c) return;
+  
+  // Get latest measurement to pre-fill weight/height/date fields
+  const latestMeasurement = c.measurements.length > 0 ? c.measurements[0] : { date: '', weight: null, height: null };
+
   $('#editId').val(c.id);
   $('#name').val(c.name);
   $('#motherName').val(c.motherName);
@@ -1446,9 +1789,21 @@ function startEdit(id){
   $('#aadhaarNumber').val(c.aadhaarNumber);
   $('#apaarId').val(c.apaarId);
   $('#abhaId').val(c.abhaId);
-  $('#weightDate').val(c.weightDate);
-  $('#weight').val(c.weight);
-  $('#height').val(c.height);
+  
+  // Pre-fill measurement fields with latest data for editing/new entry
+  const today = new Date().toISOString().split('T')[0];
+  
+  // If the latest measurement date is today, pre-fill those values
+  if (latestMeasurement.date === today) {
+    $('#weightDate').val(latestMeasurement.date);
+    $('#weight').val(latestMeasurement.weight || '');
+    $('#height').val(latestMeasurement.height || '');
+  } else {
+    // If last measurement was not today, pre-fill basic info but leave today's date and empty weight/height 
+    $('#weightDate').val(today);
+    $('#weight').val('');
+    $('#height').val('');
+  }
   
   // Update date displays for edit mode
   updateDateDisplay('dob', 'dobDisplay');
@@ -1539,12 +1894,11 @@ function applyFiltersToTable(){
 
   table.draw();
   table.page('first').draw('page');
-  
-  $.fn.dataTable.ext.search.pop();
 }
 
 function handleFilterChange() {
-    $.fn.dataTable.ext.search.pop(); 
+    // Clear all existing search functions before adding new ones
+    $.fn.dataTable.ext.search.length = 0; 
     applyFiltersToTable();
 }
 
@@ -1555,6 +1909,8 @@ function handleFilterChange() {
 // Export Data to JSON
  $('#exportBtn').on('click', function() {
     const data = getChildren();
+    // Remove unnecessary fields from export if needed, but for history tracking, 
+    // it's best to export the full object including all measurements.
     const jsonString = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -1585,17 +1941,39 @@ function handleFilterChange() {
             const importedData = JSON.parse(event.target.result);
             if (Array.isArray(importedData)) {
                 
-                // Basic validation for core fields
+                // Basic validation for core fields (checking for ID and name)
                 const isValid = importedData.every(item => 
-                    item.id !== undefined && item.name !== undefined && item.dob !== undefined
+                    item.id !== undefined && item.name !== undefined
                 );
 
                 if (isValid || importedData.length === 0) {
-                    setChildren(importedData);
+                    // Sanitize/Convert data structure upon import to ensure compatibility
+                    const sanitizedData = importedData.map(child => {
+                        if (!child.measurements || !Array.isArray(child.measurements)) {
+                            // Convert old single record format to new measurements array
+                            const measurement = {
+                                date: child.weightDate || '',
+                                weight: child.weight !== undefined ? child.weight : null,
+                                height: child.height !== undefined ? child.height : null,
+                            };
+                            delete child.weight;
+                            delete child.height;
+                            delete child.weightDate;
+                            child.measurements = measurement.date ? [measurement] : [];
+                        }
+                        // Ensure measurements are sorted after import
+                        if(child.measurements) {
+                           child.measurements.sort((a, b) => new Date(b.date) - new Date(a.date));
+                        }
+                        return child;
+                    });
+
+
+                    setChildren(sanitizedData);
                     renderTableRefresh();
-                    showSuccessMessage(`કુલ ${importedData.length} રેકોર્ડ સફળતાપૂર્વક Import થયા!`);
+                    showSuccessMessage(`કુલ ${sanitizedData.length} રેકોર્ડ સફળતાપૂર્વક Import થયા!`);
                 } else {
-                    showErrorMessage('Import કરેલ ફાઇલમાં ડેટા ફોર્મેટ અયોગ્ય છે.');
+                    showErrorMessage('Import કરેલ ફાઇલમાં ડેટા ફોર્મેટ અયોગ્ય છે (કોર ફીલ્ડ ખૂટે છે).');
                 }
                 
             } else {
@@ -1617,9 +1995,7 @@ function handleFilterChange() {
    ------------------------- */
 function renderTableRefresh(){
   // પહેલાં બધા ફિલ્ટર્સ સાફ કરો
-  while ($.fn.dataTable.ext.search.length > 0) {
-    $.fn.dataTable.ext.search.pop();
-  }
+  $.fn.dataTable.ext.search.length = 0; 
   
   const currentPageLength = $('#recordsPerPage').val(); 
   
@@ -1632,7 +2008,7 @@ function renderTableRefresh(){
   $('#recordsPerPage').val(currentPageLength); 
   renderRows();
   updateAgeGroupLabel(); 
-  applyFiltersToTable();
+  applyFiltersToTable(); // Apply filters after table is re-initialized
 }
 
 /* -------------------------
@@ -1647,5 +2023,7 @@ function renderTableRefresh(){
   }
 });
 </script>
+</body>
+</html></script>
 </body>
 </html>
